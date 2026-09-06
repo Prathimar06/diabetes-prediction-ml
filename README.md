@@ -125,9 +125,7 @@ The project reports:
 
 For a medical classification problem, accuracy should not be considered alone. Recall and false negatives are particularly important.
 
-## Interview explanation
 
-> I treated diabetes prediction as a binary classification problem. I first used Logistic Regression as an interpretable baseline, then Decision Tree to capture nonlinear rule-based relationships, and finally XGBoost as a stronger boosting model. I used a stratified train-test split and leakage-safe preprocessing pipelines, tuned the models with cross-validation, and compared them using accuracy, precision, recall, F1-score and ROC-AUC.
 
 ## Medical disclaimer
 
