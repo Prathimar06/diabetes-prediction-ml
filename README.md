@@ -1,12 +1,154 @@
 # 🩺 Diabetes Prediction Using Machine Learning
 
-An interview-friendly diabetes classification project using three complementary models:
+A machine learning project that predicts whether a patient is likely to have diabetes based on medical and demographic information.
 
-- Logistic Regression — interpretable baseline
-- Decision Tree — rule-based and explainable
-- XGBoost — powerful nonlinear boosting model
+The project trains and compares three classification models:
 
-## Project structure
+* **Logistic Regression** — baseline classification model
+* **Decision Tree** — interpretable tree-based model
+* **XGBoost** — gradient boosting model
+
+A **Streamlit web application** is also included for making predictions using the trained models.
+
+---
+
+## 📌 Project Overview
+
+The project follows a complete machine learning workflow:
+
+```text
+Dataset
+   ↓
+Data Preprocessing
+   ↓
+Train / Test Split
+   ↓
+Model Training
+   ↓
+Hyperparameter Tuning
+   ↓
+Model Evaluation
+   ↓
+Trained Models
+   ↓
+Streamlit Application
+```
+
+The models are trained using the same dataset and evaluated on a separate test set.
+
+---
+
+## 📊 Dataset
+
+The dataset contains **10,000 patient records** with the following features:
+
+* `Pregnancies`
+* `PlasmaGlucose`
+* `DiastolicBloodPressure`
+* `TricepsThickness`
+* `SerumInsulin`
+* `BMI`
+* `DiabetesPedigree`
+* `Age`
+
+The target variable is:
+
+```text
+Diabetic
+0 → Not Diabetic
+1 → Diabetic
+```
+
+`PatientID` is removed during preprocessing because it is an identifier and does not provide useful predictive information.
+
+The dataset is stored directly in this repository:
+
+```text
+data/diabetes.csv
+```
+
+No dataset is downloaded at runtime.
+
+---
+
+## ⚙️ Data Preprocessing
+
+The following preprocessing steps are performed:
+
+1. Remove `PatientID`
+2. Convert invalid zero measurements to missing values
+3. Apply median imputation for missing values
+4. Standardize features for Logistic Regression
+5. Split the data into training and testing sets using stratification
+
+All preprocessing steps are included inside the machine learning pipelines to prevent data leakage.
+
+---
+
+## 🤖 Models
+
+### Logistic Regression
+
+A simple classification model used as a baseline. It is fast and provides an interpretable relationship between the input features and prediction.
+
+### Decision Tree
+
+A tree-based model that learns decision rules from the data. It can capture nonlinear relationships and does not require feature scaling.
+
+### XGBoost
+
+A gradient boosting model that builds an ensemble of decision trees sequentially. It is capable of learning complex patterns and interactions between features.
+
+---
+
+## 🔍 Model Training
+
+Hyperparameters are tuned using:
+
+* **5-fold Stratified Cross-Validation**
+* **GridSearchCV**
+* **ROC-AUC** as the tuning metric
+
+After tuning, each model is evaluated on a held-out test set containing **2,000 records**.
+
+---
+
+## 📈 Model Results
+
+| Model               |   Accuracy |  Precision |     Recall |   F1-Score |    ROC-AUC |
+| ------------------- | ---------: | ---------: | ---------: | ---------: | ---------: |
+| **XGBoost**         | **95.70%** | **93.31%** | **93.87%** | **93.59%** | **99.24%** |
+| Decision Tree       |     91.35% |     86.36% |     88.04% |     87.19% |     95.36% |
+| Logistic Regression |     78.65% |     71.84% |     59.49% |     65.09% |     85.43% |
+
+**XGBoost achieved the best performance with a test ROC-AUC of 99.24%.**
+
+The detailed comparison is saved in:
+
+```text
+reports/model_comparison.csv
+```
+
+---
+
+## 🌐 Streamlit Application
+
+The project includes an interactive web application where users can:
+
+1. Select a machine learning model
+2. Enter patient information
+3. Generate a prediction
+4. View the predicted diabetes risk
+
+Run the application using:
+
+```powershell
+streamlit run app.py
+```
+
+---
+
+## 📁 Project Structure
 
 ```text
 diabetes-prediction/
@@ -14,11 +156,17 @@ diabetes-prediction/
 ├── data/
 │   └── diabetes.csv
 │
+├── models/
+│   ├── logistic_regression.joblib
+│   ├── decision_tree.joblib
+│   └── xgboost.joblib
+│
 ├── notebooks/
 │   └── diabetes_prediction.ipynb
 │
-├── models/
 ├── reports/
+│   └── model_comparison.csv
+│
 ├── app.py
 ├── train.py
 ├── requirements.txt
@@ -26,107 +174,65 @@ diabetes-prediction/
 └── README.md
 ```
 
-## Dataset
+---
 
-The project uses the 10,000-record `diabetes.csv` dataset with these columns:
+## 🚀 How to Run
 
-`PatientID, Pregnancies, PlasmaGlucose, DiastolicBloodPressure, TricepsThickness, SerumInsulin, BMI, DiabetesPedigree, Age, Diabetic`
+### 1. Clone the repository
 
-The dataset is stored directly inside this repository under `data/diabetes.csv`.
-The application and training code do not download data from another repository at runtime.
+```powershell
+git clone <repository-url>
+cd diabetes-prediction
+```
 
-## Setup
+### 2. Create a virtual environment
 
 ```powershell
 python -m venv venv
+```
+
+Activate it:
+
+```powershell
 .\venv\Scripts\Activate.ps1
+```
+
+### 3. Install dependencies
+
+```powershell
 pip install -r requirements.txt
 ```
 
-Put the dataset at:
-
-```text
-data/diabetes.csv
-```
-
-Then run:
+### 4. Train the models
 
 ```powershell
 python train.py
 ```
 
-This trains all three models, tunes their hyperparameters using 5-fold stratified cross-validation, evaluates them on the held-out test set, and saves the trained pipelines.
+This trains the three models and saves the trained pipelines in the `models/` directory.
 
-To launch the application:
+### 5. Run the application
 
 ```powershell
 streamlit run app.py
 ```
 
-## Machine learning workflow
+---
 
-```text
-Dataset
-   ↓
-Data inspection
-   ↓
-Remove PatientID
-   ↓
-Handle invalid zero measurements
-   ↓
-Stratified train/test split
-   ↓
-Preprocessing Pipeline
-   ↓
-Logistic Regression
-Decision Tree
-XGBoost
-   ↓
-5-fold cross-validation + GridSearchCV
-   ↓
-Accuracy / Precision / Recall / F1 / ROC-AUC
-   ↓
-Save trained models
-   ↓
-Streamlit application
-```
+## 🛠️ Technologies Used
 
-## Why these three models?
+* Python
+* Pandas
+* NumPy
+* Scikit-learn
+* XGBoost
+* Matplotlib
+* Seaborn
+* Streamlit
+* Joblib
 
-### Logistic Regression
+---
 
-Used as the baseline because it is simple, fast and interpretable for binary classification.
+## ⚠️ Disclaimer
 
-### Decision Tree
-
-Used because it learns easy-to-explain if/then decision rules and can capture nonlinear relationships without feature scaling.
-
-### XGBoost
-
-Used as the stronger nonlinear model. It builds an ensemble of decision trees sequentially and can capture complex relationships and feature interactions.
-
-## Important preprocessing decisions
-
-`PatientID` is removed because it is an identifier rather than a meaningful medical feature.
-
-For several measurements, zero is treated as an invalid/missing value and converted to `NaN`. Median imputation is then performed inside the training pipeline.
-
-Logistic Regression uses `StandardScaler`. Decision Tree and XGBoost do not require scaling because they are tree-based models.
-
-## Evaluation
-
-The project reports:
-
-- Accuracy
-- Precision
-- Recall
-- F1-score
-- ROC-AUC
-
-For a medical classification problem, accuracy should not be considered alone. Recall and false negatives are particularly important.
-
-
-
-## Medical disclaimer
-
-This is an educational machine-learning project and should not be used as a medical diagnostic system.
+This project is intended for **educational purposes only**. The predictions generated by this application should not be considered medical advice or used as a substitute for professional medical diagnosis.
